@@ -1,40 +1,28 @@
 import pandas as pd
-from pandas import StringDtype
 
-# extracting the file
 
-call_details = pd.read_csv('C:/Users/DUNSIN/Downloads/Final Project/Final Project/call_details.csv')
-
+# read call_log file
 call_log = pd.read_csv('C:/Users/DUNSIN/Downloads/Final Project/Final Project/call_log.csv')
 
-# checking the table
-# call_details.info()
-# call_log.info()
-# print(call_log.head(30))
+# replacing the empty rows in the assignedto column with the agentID
+call_log['assignedTo'] = call_log['assignedTo'].fillna(call_log['agentID'])
 
-# filling the missing assigned to columuns with agentID
-call_log['assignedTo'].fillna(call_log['agentID'], inplace=True)
+# replacing the empty rows in resolutiondurationhours to 'pending' and changing the datatype
+call_log['resolutionDurationInHours'] = call_log['resolutionDurationInHours'].astype(object)
+call_log['resolutionDurationInHours'] = call_log['resolutionDurationInHours'].fillna('pending')
 
-# filling the empty resolution duration column with 'not closed'
-call_log['resolutionDurationInHours'].fillna('still resolving complaint', inplace=True)
+call_log = pd.DataFrame(call_log)
+call_log.to_csv('cleaned_call_log.csv', index=False)
 
-# change datatype
-call_log['assignedTo'] = call_log['assignedTo'].astype(int)
-call_log['resolutionDurationInHours'] = call_log['resolutionDurationInHours'].astype(str)
+# read call_details file
+call_details = pd.read_csv('C:/Users/DUNSIN/Downloads/Final Project/Final Project/call_details.csv')
 
-
-# save the cleaned call_log to csv
-call_log.to_csv('call_log.csv', index=True)
-
-# changing the inbound to in-bound in the call_details table
+# replace the row with Inbound to in-bound in the callType column
 call_details['callType'] = call_details['callType'].replace('Inbound', 'in-bound')
 
-# save the cleaned call_details to csv
-call_details.to_csv('call_details.csv', index=True)
+call_details = pd.DataFrame(call_details)
+call_details.to_csv('cleaned_call_details.csv', index=False)
+
+
+call_details.info()
 call_log.info()
-
-
-
-
-
-
